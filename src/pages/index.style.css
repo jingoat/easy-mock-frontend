@@ -1,0 +1,9 @@
+.module-type-item {
+  background: #ccc;
+  width: 100px;
+  height: 100px;
+  margin: 10px;
+}
+.active {
+  background: yellow;
+}

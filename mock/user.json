@@ -1,0 +1,14 @@
+{
+  "status": 200,
+  "path": "/api/userList",
+  "data": [
+    {
+      "name": "Gavin",
+      "age": 26
+    },
+    {
+      "name": "Gavin2",
+      "age": 26
+    }
+  ]
+}

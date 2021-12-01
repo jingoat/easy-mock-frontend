@@ -1,0 +1,29 @@
+* {
+  margin: 0;
+  padding: 0;
+}
+
+.mock-top {
+  height: 150px;
+}
+
+.mock-bottom {
+  height: 500px;
+}
+
+.mock-bottom-item {
+  height: calc(100vh - 150px);
+  border: 1px solid #000;
+}
+
+.mock-bottom-left {
+  font-size: 16px;
+  display: inline-block;
+  width: 300px;
+}
+
+.mock-bottom-right {
+  font-size: 16px;
+  display: inline-block;
+  width: calc(100% - 309px);
+}
