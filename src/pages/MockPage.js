@@ -5,7 +5,26 @@ import "./MockPage.style.css";
 const { TextArea } = Input;
 
 function MockPage() {
-  useEffect(() => {}, []);
+  const [allData, setAllData] = useState([]);
+
+  useEffect(() => {
+    fetch("api/getAll", {
+      method: "GET",
+      mode: "cors",
+      headers: {
+        "Content-Type": "application/json"
+      }
+    })
+      .then(function(response) {
+        return response.text();
+      })
+      .then(function(myJson) {
+        console.log(myJson);
+        setAllData(JSON.parse(myJson).data);
+      });
+  }, []);
+
+  console.info("allData--------", allData);
 
   return (
     <div className="mock-page">
@@ -20,10 +39,13 @@ function MockPage() {
       </div>
       <div className="mock-bottom">
         <div className="mock-bottom-left mock-bottom-item">
-          <a className="data-item">/test1</a>
-          <a className="data-item">/test1/test2</a>
-          <a className="data-item">/test/test2/test3</a>
-          <a className="data-item">/test/test2/test3/test4</a>
+          {allData.map(item => {
+            return (
+              <a className="data-item" key={item.id}>
+                /test1
+              </a>
+            );
+          })}
         </div>
         <div className="mock-bottom-right mock-bottom-item">
           <Button type="primary" className="update-btn mock-top-btn">
