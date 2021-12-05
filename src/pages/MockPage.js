@@ -197,6 +197,10 @@ function MockPage() {
 
   return (
     <div className="mock-page">
+      <div className="about-mock">
+        <div>easy-mock v1.0</div>
+        <div>注：接口使用方式：域名(或ip+端口号)+ /api/mock/ + 接口地址</div>
+      </div>
       <div className="mock-top">
         <Input
           className="search-input"
