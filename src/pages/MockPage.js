@@ -2,6 +2,8 @@ import React, { useEffect, useState, useRef } from "react";
 import { Button, Input, Modal, message } from "antd";
 import { ExclamationCircleOutlined } from "@ant-design/icons";
 import "./MockPage.style.css";
+import { formatJson } from "../utils";
+import { useDebounceFn } from "ahooks";
 
 const { TextArea } = Input;
 const { confirm } = Modal;
@@ -20,6 +22,38 @@ function MockPage() {
   const [addData, setAddData] = useState("");
 
   const [searchValue, setSearchValue] = useState("");
+
+  useEffect(() => {
+    window.addEventListener("keydown", onWindowKeyDow, false);
+  });
+
+  const onWindowKeyDow = e => {
+    const isSave =
+      e.keyCode == 83 &&
+      (navigator.platform.match("Mac") ? e.metaKey : e.ctrlKey);
+    if (isSave) {
+      e.preventDefault();
+      handleSave.run();
+    }
+  };
+
+  const handleSave = useDebounceFn(
+    () => {
+      if (!currentId) {
+        message.warning("请点击选中某条数据");
+        return;
+      }
+      onUpdateCurrentItem.run();
+    },
+    { wait: 500 }
+  );
+
+  const formatData = () => {
+    const res = formatJson(currentData, () => {
+      message.error("请输入标准JSON格式数据");
+    });
+    setCurrentData(res);
+  };
 
   useEffect(() => {
     getAllData();
@@ -85,7 +119,6 @@ function MockPage() {
   };
 
   const handleAddOk = () => {
-    console.info("addData------------", addData);
     fetch(`api/add${addPath.indexOf("/") === 0 ? addPath : "/" + addPath}`, {
       method: "POST",
       mode: "cors",
@@ -144,7 +177,7 @@ function MockPage() {
             return response.text();
           })
           .then(function(myJson) {
-            console.log(myJson);
+            // console.log(myJson);
             message.success("删除成功");
             getAllData();
             setCurrentId("");
@@ -157,30 +190,29 @@ function MockPage() {
     });
   };
 
-  const onUpdateCurrentItem = () => {
-    if (!currentId) {
-      message.warning("请点击选中某条数据");
-      return;
-    }
-    fetch(`api/update/${currentId}`, {
-      method: "PUT",
-      mode: "cors",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({
-        mockData: JSON.stringify(JSON.parse(currentData))
+  const onUpdateCurrentItem = useDebounceFn(
+    () => {
+      fetch(`api/update/${currentId}`, {
+        method: "PUT",
+        mode: "cors",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          mockData: JSON.stringify(JSON.parse(currentData))
+        })
       })
-    })
-      .then(function(response) {
-        return response.text();
-      })
-      .then(function(myJson) {
-        message.success("保存成功");
-        getAllData();
-        console.log(myJson);
-      });
-  };
+        .then(function(response) {
+          return response.text();
+        })
+        .then(function(myJson) {
+          message.success("保存成功");
+          getAllData();
+          // console.log(myJson);
+        });
+    },
+    { wait: 1500 }
+  );
 
   const onSearch = e => {
     const value = e.target.value;
@@ -229,6 +261,7 @@ function MockPage() {
               <a
                 className="data-item"
                 key={item.id}
+                style={{ color: item.id === currentId ? "#40a9ff" : "#666" }}
                 onClick={() => {
                   onClickDataItem(item);
                 }}
@@ -242,7 +275,20 @@ function MockPage() {
           <Button
             type="primary"
             className="update-btn mock-top-btn"
-            onClick={onUpdateCurrentItem}
+            onClick={formatData}
+          >
+            格式化JSON
+          </Button>
+          <Button
+            type="primary"
+            className="update-btn mock-top-btn"
+            onClick={() => {
+              if (!currentId) {
+                message.warning("请点击选中某条数据");
+                return;
+              }
+              onUpdateCurrentItem.run();
+            }}
           >
             保存
           </Button>
