@@ -61,8 +61,16 @@ textarea.ant-input {
   height: 100%;
 }
 .data-item {
-  border-bottom: 1px solid #40a9ff;
+  border-bottom: 1px solid #666;
   height: 40px;
   line-height: 40px;
   display: block;
+  color: #666;
+}
+.add-text-area {
+  margin-top: 20px;
+  width: 100%;
+}
+.add-modal {
+  width: 600px;
 }
